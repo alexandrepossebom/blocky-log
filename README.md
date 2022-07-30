@@ -37,7 +37,7 @@ blockys:
 ## Output example
 
 <p align="center">
-  <img height="200" src="https://github.com/alexandrepossebom/blocky-log/blob/master/docs/sample.jpg">
+  <img height="200" src="https://github.com/alexandrepossebom/blocky-log/raw/main/docs/sample.jpg">
 </p>
 
 ## Contribution
