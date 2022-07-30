@@ -1,3 +1,7 @@
+<p align="center">
+  <img height="200" src="https://github.com/alexandrepossebom/blocky-log/raw/main/docs/gopher.png">
+</p>
+
 # Blocky Logs
 
 Blocky Logs is a utility to show logs from [blocky DNS](https://0xERR0R.github.io/blocky/)
