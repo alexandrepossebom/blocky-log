@@ -16,8 +16,9 @@ var (
 )
 
 type ConfYaml struct {
-	Hours   int          `yaml:"hours"`
-	Blockys []BlockyItem `yaml:"blockys"`
+	Hours            int          `yaml:"hours"`
+	DefaultEventType string       `yaml:"defaulteventtype"`
+	Blockys          []BlockyItem `yaml:"blockys"`
 }
 
 type SectionDatabase struct {
@@ -75,7 +76,8 @@ func loadConf() {
 	viper.AddConfigPath("/etc")
 	viper.AddConfigPath("$HOME/etc")
 	viper.SetConfigName(filename)
-	viper.SetDefault("hours", "24")
+	viper.SetDefault("hours", "1")
+	viper.SetDefault("defaulteventtype", "all")
 	viper.SetDefault("blockys",
 		map[string]any{
 			"name": "home",

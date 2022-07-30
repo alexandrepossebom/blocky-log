@@ -44,5 +44,5 @@ func init() {
 		rootCmd.PersistentFlags().StringVarP(&Host, "host", "", hosts[0], "which host to use the valid options are: "+strings.Join(hosts, ", "))
 	}
 	rootCmd.Flags().IntVarP(&time, "hours", "", config.Get().Hours, "hours to show")
-	rootCmd.Flags().StringVarP(&eventType, "event", "e", "BLOCKED (porn)", "type of event to show")
+	rootCmd.Flags().StringVarP(&eventType, "event", "e", config.Get().DefaultEventType, "type of event to show, use 'all' to show all events")
 }

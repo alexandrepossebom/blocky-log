@@ -11,7 +11,7 @@ At this moment it's just working if you logging to MySQL database.
 ## Features
 
 - **Show by event type**
-  - By default its show events of type "BLOCKED (porn)"
+  - By default its show events from last hour
   - To show all events user --event "all"
   
 - **Show events by IP**
@@ -26,7 +26,8 @@ The configuration file accepts multiple hosts.
 Configuration file can be placed in `/etc` directory, current directory or in `~/etc` directory.
 
 ```YAML
-hours: 24
+hours: 1
+defaulteventtype: all # "all" "BLOCKED (porn)" "BLOCKED (ads)"
 blockys:
   - database:
       database: blocky

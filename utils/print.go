@@ -55,11 +55,6 @@ func ListEventsByIP(host, ip string, hours int, eventType string) {
 }
 
 func populateEntries(res *sql.Rows) []model.LogEntry {
-	loc, err := time.LoadLocation("America/Sao_Paulo")
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
 	entries := []model.LogEntry{}
 	for res.Next() {
 		var logEntry model.LogEntry
@@ -67,7 +62,6 @@ func populateEntries(res *sql.Rows) []model.LogEntry {
 		if err != nil {
 			log.Panicln(err)
 		}
-		logEntry.RequestTime = logEntry.RequestTime.In(loc)
 		entries = append(entries, logEntry)
 	}
 
@@ -82,7 +76,14 @@ func ListEvents(host, eventType string, hours int) {
 	db := getConnection(host)
 	defer db.Close()
 
-	res, err := db.Query("select request_ts,client_ip,client_name,reason,response_type,question_type,question_name from log_entries where reason = ? and request_ts > DATE_SUB(NOW(), INTERVAL ? HOUR)", eventType, hours)
+	var res *sql.Rows
+	var err error
+
+	if eventType == "all" {
+		res, err = db.Query("select request_ts,client_ip,client_name,reason,response_type,question_type,question_name from log_entries where request_ts > DATE_SUB(NOW(), INTERVAL ? HOUR)", hours)
+	} else {
+		res, err = db.Query("select request_ts,client_ip,client_name,reason,response_type,question_type,question_name from log_entries where reason = ? and request_ts > DATE_SUB(NOW(), INTERVAL ? HOUR)", eventType, hours)
+	}
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
@@ -94,16 +95,20 @@ func ListEvents(host, eventType string, hours int) {
 func ShowTable(entries []model.LogEntry) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Date", "IP", "Url"})
+	t.AppendHeader(table.Row{"Date", "IP", "Client Name", "Event Type", "Url"})
 	m := make(map[string]time.Time)
 	for _, entry := range entries {
+		name := entry.ClientName
+		if name == entry.ClientIP {
+			name = ""
+		}
 		key := fmt.Sprintf("%s-%s", entry.ClientIP, entry.QuestionName)
 		if _, ok := m[key]; !ok {
 			m[key] = entry.RequestTime
 		} else if m[key].Add(time.Second * 30).After(entry.RequestTime) {
 			continue
 		}
-		t.AppendRow([]interface{}{entry.RequestTime.Format("02/01 15:04"), entry.ClientIP, entry.QuestionName})
+		t.AppendRow([]interface{}{entry.RequestTime.Format("02/01 15:04"), entry.ClientIP, name, entry.Reason, entry.QuestionName})
 	}
 	t.AppendSeparator()
 	t.Render()
